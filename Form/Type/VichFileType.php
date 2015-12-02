@@ -68,7 +68,13 @@ class VichFileType extends AbstractType
         $translator = $this->translator;
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options, $storage, $translator) {
             $form = $event->getForm();
-            $object = $form->getParent()->getData();
+            $parent = $form->getParent();
+
+            if (null === $parent) {
+                return;
+            }
+
+            $object = $parent->getData();
 
             // no object or no uploaded file: no delete button
             if (null === $object || null === $storage->resolveUri($object, $form->getName())) {
